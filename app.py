@@ -1,12 +1,16 @@
 from flask import Flask , request
 import requests
 from twilio.twiml.voice_response import VoiceResponse
+import os
+from dotenv import load_dotenv
+import openai
+load_dotenv()
 
 app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def meow():
-    return "meow"
+    return "running"
 
 @app.route("/answer", methods=['GET', 'POST'])
 def answer_call():
@@ -30,6 +34,7 @@ def handleRecord():
     print(url)
     response=requests.get(url , auth=("AC2deea27febf4d49d44979e23c46aad2c","fe472d53fb4ae0b7b0d7b29612a986dc"))
     print(response)
+    filename=""
     if response.status_code == 200:
         # Extract the filename from the URL
         filename = url.split("/")[-1]
@@ -45,6 +50,14 @@ def handleRecord():
 
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
-    return "ok"
+
+    print(os.getenv("OPENAI_API_KEY"))
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    audio_file= open(f'./{filename}', "rb")
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    print(transcript)
+
+    return transcript["text"]
 if __name__ == "__main__":
     app.run(debug=True)
