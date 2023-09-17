@@ -1,6 +1,6 @@
 from flask import Flask , request
 import requests
-from twilio.twiml.voice_response import VoiceResponse
+from twilio.twiml.voice_response import VoiceResponse , Dial
 import os
 from dotenv import load_dotenv
 import openai
@@ -19,10 +19,18 @@ def answer_call():
     resp = VoiceResponse()
 
     # Read a message aloud to the caller
+    #resp.say("Please record your message", voice='Polly.Amy')
     resp.say("Please record your message", voice='Polly.Amy')
+    dial = Dial(
+    record='record-from-answer-dual',
+    recording_status_callback='https://5c1b-202-142-106-83.ngrok-free.app/handleRecord',
+    timeout=30,
+    channels=2
+    )
+    dial.number('+919432318382')
+    resp.append(dial)
 
-
-    resp.record(action=" https://5c1b-202-142-106-83.ngrok-free.app/handleRecord",timeout=10, transcribe=True , transcribeCallback="https://cf79-202-142-106-83.ngrok-free.app/handleText" , channels=2)
+    #resp.record(action=" https://5c1b-202-142-106-83.ngrok-free.app/handleRecord",timeout=10, transcribe=True , transcribeCallback="https://cf79-202-142-106-83.ngrok-free.app/handleText" , channels=2)
     print(resp)
     return str(resp)
 
