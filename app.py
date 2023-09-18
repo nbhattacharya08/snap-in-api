@@ -1,7 +1,7 @@
 from flask import Flask , request, jsonify
 import requests
-from twilio.twiml.voice_response import VoiceResponse
 from functions import findIssueMatch
+from twilio.twiml.voice_response import VoiceResponse , Dial
 import os
 
 load_dotenv()
@@ -19,6 +19,7 @@ def answer_call():
     resp = VoiceResponse()
 
     # Read a message aloud to the caller
+    #resp.say("Please record your message", voice='Polly.Amy')
     resp.say("Please record your message", voice='Polly.Amy')
     dial = Dial(
     record='record-from-answer-dual',
@@ -26,9 +27,16 @@ def answer_call():
     timeout=30,
     channels=2
     )
+<<<<<<< HEAD
     dial.number('+918336953155')
     resp.append(dial)
 
+=======
+    dial.number('+919432318382')
+    resp.append(dial)
+
+    #resp.record(action=" https://5c1b-202-142-106-83.ngrok-free.app/handleRecord",timeout=10, transcribe=True , transcribeCallback="https://cf79-202-142-106-83.ngrok-free.app/handleText" , channels=2)
+>>>>>>> 357730843add87e0ec1c90592f75627888ea12ea
     print(resp)
     return str(resp)
 
