@@ -32,7 +32,7 @@ def generateIssue(summary):
   frequency_penalty=0,
   presence_penalty=0
   )
-  reply=response.choices[0]['text']
+  reply=response['choices'][0]['message']['content']
   issues=reply.split('$')
   return issues
 
@@ -74,7 +74,7 @@ def matchesIssue(issue, ticketIssue):
   frequency_penalty=0,
   presence_penalty=0
   )
-  reply=response.choices[0]['text']
+  reply=response['choices'][0]['message']['content']
 
   return reply
 
@@ -90,10 +90,10 @@ def findIssueMatch(request):
   
     for ticketIssue in ticketIssues:
       for issue in issues:
-        result=matchesIssue(issue.title, ticketIssue)   #can be replaced with issue.body
+        result=matchesIssue(issue['title'], ticketIssue)   #can be replaced with issue.body
         if(result == 'True'):
           if(issue.id not in issueMap):
-            issueMap[issue.id] = ticketIssue      #add issue if it matches an issue in the ticket
+            issueMap[issue['id']] = ticketIssue      #add issue if it matches an issue in the ticket
 
     return issueMap
 

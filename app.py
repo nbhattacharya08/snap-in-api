@@ -2,6 +2,7 @@ from flask import Flask , request, jsonify
 import requests
 from functions import findIssueMatch
 from twilio.twiml.voice_response import VoiceResponse , Dial
+from dotenv import load_dotenv
 import os
 
 load_dotenv()
