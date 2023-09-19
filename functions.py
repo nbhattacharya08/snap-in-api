@@ -1,8 +1,8 @@
 import os
 import openai
 
-openai.organization = "org-OHLwjqs63uf8tbdAcFnvPhJ4"
-openai.api_key = "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"
+openai.organization = "org-qzg28Np9i12LTqFMRiAWrbAI"
+openai.api_key = "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"
 
 
 def generateIssue(summary):
@@ -41,7 +41,7 @@ def generateIssue(summary):
 def matchesIssue(issue, ticketIssue):
   question = issue + "$" + ticketIssue
   response = openai.ChatCompletion.create(
-  model="gpt-3.5-turbo",
+  model="gpt-4",
   messages=[
     {
       "role": "system",
@@ -87,12 +87,13 @@ def findIssueMatch(request):
     summary=ticket['work']['body']
     id=ticket['work']['id']
     ticketIssues=generateIssue(summary)
-  
+    print(ticketIssues)
+    issueMap={}
     for ticketIssue in ticketIssues:
       for issue in issues:
         result=matchesIssue(issue['title'], ticketIssue)   #can be replaced with issue.body
         if(result == 'True'):
-          if(issue.id not in issueMap):
+          if(issue['id'] not in issueMap):
             issueMap[issue['id']] = ticketIssue      #add issue if it matches an issue in the ticket
 
     return issueMap
