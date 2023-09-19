@@ -69,7 +69,7 @@ def handleRecord():
 
 @app.route("/group-issue",methods=["POST"])
 def handleGroupIssue():
-    return jsonify(findIssueMatch(request))
+    return {"issues": findIssueMatch(request)}
     
 if __name__ == "__main__":
     app.run(debug=True)
