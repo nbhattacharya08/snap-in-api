@@ -1,5 +1,6 @@
 import os
 import openai
+import ast
 
 openai.organization = "org-qzg28Np9i12LTqFMRiAWrbAI"
 openai.api_key = "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"
@@ -11,7 +12,7 @@ def generateIssue(summary):
   messages=[
     {
       "role": "system",
-      "content": "You need to identify the main problems only faced by the customer or complaints made by a customer from a series of customer and support executive exchanges and condense it to a single grammatically correct sentence for each problem and display the output in such a way that i can parse it by splitting. Hence, show it in the format \"Issue 1$Issue 2$Issue3\""
+      "content": "You need to identify the main issues only faced by the customer or complaints made by a customer from a series of customer and support executive exchanges and condense it to a single grammatically correct sentence for each problem and display the output in such a way that i can parse it by splitting. Hence, show it in the format \"Issue 1$Issue 2$Issue3\""
     },
     {
       "role": "user",
@@ -37,31 +38,43 @@ def generateIssue(summary):
   return issues
 
 
+def findIssueMatch(request):
+    body=request.json
+    ticket=body['ticket']       #pass ticket creation event containing work field
+    issues=body['issues']       #pass array of issues 
+    summary=ticket['work']['body']
+    id=ticket['work']['id']
+    ticketIssues=generateIssue(summary)
+    issueTitles=[]
+    issueIds=[]
+    print(ticketIssues)
+    for issue in issues:
+      issueTitles.append(issue['title'])
+      issueIds.append(issue['id'])
+    issueMap=[]
+    for ticketIssue in ticketIssues:
+      result = matchesIssues(ticketIssue, str(issueTitles))
+      for i in range(len(result)):
+        if(result[i]==True and issueIds[i] not in issueMap):
+          issueMap.append(issueIds[i])          #add isssue id if it matches any of the ticket issues
+    return issueMap
 
-def matchesIssue(issue, ticketIssue):
-  question = issue + "$" + ticketIssue
+def matchesIssues(ticketIssue,issues):
+  question = "target phrase : "+ticketIssue + " $ list of issues : "+issues
   response = openai.ChatCompletion.create(
   model="gpt-4",
   messages=[
     {
       "role": "system",
-      "content": "Return \"True\" if the two phrases convey the same meaning or roughly point to the same issue associated with a component or feature, else return \"False\". The two phrases are separated by '$'"
+      "content": "You are given a list of issues and a single phrase. Return \"True\" if a pair of phrases convey the same meaning or roughly point to the same issue associated with a component or feature, else return \"False\". The output must be formatted in the following way \"[True, False, True]\" where a true value denotes that the issue at that index matches the target phrase. The target phrase and the list of issues are separated by \"$\""
     },
     {
       "role": "user",
-      "content": "Unresponsive submit button $ submit button not working properly"
+      "content": "target issue :  some images appear broken $ list of issues : [\"Unresponsive media players\", \"Inconsistent branding\" ,  \"Broken Images\" ,  \"Inconsistent Design\" , \"Outdated Content\", \"Lack of Accessibility\"]"
     },
     {
       "role": "assistant",
-      "content": "True"
-    },
-    {
-      "role": "user",
-      "content": "Poor UI design $ Interface is not user friendly"
-    },
-    {
-      "role": "assistant",
-      "content": "True"
+      "content": "[False, False, True, False, False, False]"
     },
     {
       "role": "user",
@@ -75,29 +88,6 @@ def matchesIssue(issue, ticketIssue):
   presence_penalty=0
   )
   reply=response['choices'][0]['message']['content']
-
-  return reply
-
-
-
-def findIssueMatch(request):
-    body=request.json
-    ticket=body['ticket']       #pass ticket creation event containing work field
-    issues=body['issues']       #pass array of issues 
-    summary=ticket['work']['body']
-    id=ticket['work']['id']
-    ticketIssues=generateIssue(summary)
-    print(ticketIssues)
-    issueMap={}
-    for ticketIssue in ticketIssues:
-      for issue in issues:
-        result=matchesIssue(issue['title'], ticketIssue)   #can be replaced with issue.body
-        if(result == 'True'):
-          if(issue['id'] not in issueMap):
-            issueMap[issue['id']] = ticketIssue      #add issue if it matches an issue in the ticket
-
-    return issueMap
-
-
+  return ast.literal_eval(reply)
 
 
