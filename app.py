@@ -1,4 +1,4 @@
-from flask import Flask , request, jsonify
+from flask import Flask , request
 import requests
 from functions import findIssueMatch
 from twilio.twiml.voice_response import VoiceResponse , Dial
@@ -69,7 +69,7 @@ def handleRecord():
 
 @app.route("/group-issue",methods=["POST"])
 def handleGroupIssue():
-    return {"issues": findIssueMatch(request)}
+    return  findIssueMatch(request)
     
 if __name__ == "__main__":
     app.run(debug=True)

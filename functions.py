@@ -1,6 +1,7 @@
 import os
 import openai
 import ast
+from flask import jsonify
 
 openai.organization = "org-qzg28Np9i12LTqFMRiAWrbAI"
 openai.api_key = "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"
@@ -52,12 +53,18 @@ def findIssueMatch(request):
       issueTitles.append(issue['title'])
       issueIds.append(issue['id'])
     issueMap=[]
+    unmatched=[]
     for ticketIssue in ticketIssues:
+      flag=True
       result = matchesIssues(ticketIssue, str(issueTitles))
       for i in range(len(result)):
         if(result[i]==True and issueIds[i] not in issueMap):
+          flag=False
           issueMap.append(issueIds[i])          #add isssue id if it matches any of the ticket issues
-    return issueMap
+      if(flag==True):
+        unmatched.append(ticketIssue)
+    return {"issueIds" : issueMap, "issueNames":unmatched}
+
 
 def matchesIssues(ticketIssue,issues):
   question = "target phrase : "+ticketIssue + " $ list of issues : "+issues
@@ -89,5 +96,6 @@ def matchesIssues(ticketIssue,issues):
   )
   reply=response['choices'][0]['message']['content']
   return ast.literal_eval(reply)
+
 
 
