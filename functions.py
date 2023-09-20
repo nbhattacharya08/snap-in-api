@@ -9,22 +9,30 @@ openai.api_key = "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"
 
 def generateIssue(summary):
   response = openai.ChatCompletion.create(
-  model="gpt-3.5-turbo",
+  model="gpt-4",
   messages=[
     {
       "role": "system",
-      "content": "You need to identify the main issues only faced by the customer or complaints made by a customer from a series of customer and support executive exchanges and condense it to a single grammatically correct sentence for each problem and display the output in such a way that i can parse it by splitting. Hence, show it in the format \"Issue 1$Issue 2$Issue3\""
+      "content": "You need to identify the main problems only faced by the customer or complaints made by a customer from a series of customer and support executive exchanges and condense each separate issue to a single succinct, grammatically correct sentence and format it as \"Issue 1 $Issue 2 $Issue3\". Then, for each separate issue, write a short sentence explaining it and format it as a comma-separated array with each element corresponding to the respective issue [\"Sentence 1\", \"Sentence 2\"]. There should not be any full stops in the sentences and the sentences should be in double quotes. The final output must be formatted as  \"Issue1 $ Issue2 & [\"Sentence 1\",\"Sentence 2\"]\""
     },
     {
       "role": "user",
-      "content": " Customer: Hello! I am Rahul, I placed an order on swiggy 20 mins ago and I cannot reach my delivery executive. Executive: Give me a moment sir, let me just check. Customer: Sure! Executive: Thank you sir for being on hold, your order will take 15 more minutes to get ready as there is a rush at the restaurant. Your delivery executive is at the restaurant to collect the order as soon as he does it, he will contact you himself. Customer: But why can’t I reach my delivery executive? executive: As our delivery man hasn’t received your order yet from the restaurant and your delivery code hasn’t been generated so that’s why you are are unable to reach the delivery guy. Customer: But I wanted to customize my order a little. Executive: sir for the same you can contact the restaurant directly. The contact details are provided below your order. Customer: sure! Thank you for your help. Executive: It was my pleasure sir and we apologize for the inconvenience caused. I hope you enjoy your order and have a good day forth.  "
+      "content": "The customer said that he could not contact his delivery partner and that the site took a long time to load."
     },
     {
       "role": "assistant",
-      "content": "Unable to reach delivery executive$Order delayed due to rush at restaurant$Unable to customize order through delivery executive"
+      "content": "Cannot contact delivery partner $ Site takes a long time to load. & [The customer is unable to contact their delivery partner, The website is slow to load]"
     },
     {
-      "role":"user",
+      "role": "user",
+      "content": "The customer complained about his order reaching late and that there were too many ads in the app"
+    },
+    {
+      "role": "assistant",
+      "content": "Order delivered late $ Too many ads in the app. & [The customer's order arrived late, The app has an excessive amount of advertisements]"
+    },
+    {
+      "role": "user",
       "content": summary
     }
   ],
@@ -35,8 +43,8 @@ def generateIssue(summary):
   presence_penalty=0
   )
   reply=response['choices'][0]['message']['content']
-  issues=reply.split('$')
-  return issues
+  reply=reply.split('&')
+  return {"issues":reply[0].split('$'), "text":ast.literal_eval(reply[1])}
 
 
 def findIssueMatch(request):
@@ -45,15 +53,19 @@ def findIssueMatch(request):
     issues=body['issues']       #pass array of issues 
     summary=ticket['work']['body']
     id=ticket['work']['id']
-    ticketIssues=generateIssue(summary)
+    generatedIssues=generateIssue(summary)
+    ticketIssues=generatedIssues["issues"]
+    issueText=generatedIssues["text"]
     issueTitles=[]
     issueIds=[]
+    issueBody=[]
     print(ticketIssues)
     for issue in issues:
       issueTitles.append(issue['title'])
       issueIds.append(issue['id'])
     issueMap=[]
     unmatched=[]
+    j=0
     for ticketIssue in ticketIssues:
       flag=True
       result = matchesIssues(ticketIssue, str(issueTitles))
@@ -63,7 +75,9 @@ def findIssueMatch(request):
           issueMap.append(issueIds[i])          #add isssue id if it matches any of the ticket issues
       if(flag==True):
         unmatched.append(ticketIssue)
-    return {"issueIds" : issueMap, "issueNames":unmatched}
+        issueBody.append(issueText[j])
+      j=j+1
+    return {"issueIds" : issueMap, "issueNames":unmatched, "issueBody": issueBody}  #add issueBody field
 
 
 def matchesIssues(ticketIssue,issues):
