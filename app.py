@@ -1,6 +1,6 @@
 from flask import Flask , request
 import requests
-from functions import findIssueMatch
+from functions import findIssueMatch , generateTicket
 from twilio.twiml.voice_response import VoiceResponse , Dial
 import openai
 from dotenv import load_dotenv
@@ -66,7 +66,7 @@ def handleRecord():
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     print(transcript)
 
-    
+    generateTicket(transcript["text"])
 
     return transcript["text"]
 
