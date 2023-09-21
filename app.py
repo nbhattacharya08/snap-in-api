@@ -24,7 +24,7 @@ def answer_call():
     resp.say("Please record your message", voice='Polly.Amy')
     dial = Dial(
     record='record-from-answer-dual',
-    recording_status_callback='https://5c1b-202-142-106-83.ngrok-free.app/handleRecord',
+    recording_status_callback='https://hackerhive.onrender.com/handleRecord',
     timeout=30,
     channels=2
     )
@@ -63,6 +63,8 @@ def handleRecord():
     audio_file= open(f'./{filename}', "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     print(transcript)
+
+    
 
     return transcript["text"]
 

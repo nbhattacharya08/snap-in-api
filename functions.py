@@ -21,7 +21,7 @@ def generateIssue(summary):
     },
     {
       "role": "assistant",
-      "content": "Cannot contact delivery partner $ Site takes a long time to load. & [The customer is unable to contact their delivery partner, The website is slow to load]"
+      "content": "Cannot contact delivery partner $ Site takes a long time to load. & [\"The customer is unable to contact their delivery partner\", \"The website is slow to load\"]"
     },
     {
       "role": "user",
@@ -29,7 +29,7 @@ def generateIssue(summary):
     },
     {
       "role": "assistant",
-      "content": "Order delivered late $ Too many ads in the app. & [The customer's order arrived late, The app has an excessive amount of advertisements]"
+      "content": "Order delivered late $ Too many ads in the app. & [\"The customer's order arrived late\", \"The app has an excessive amount of advertisements\"]"
     },
     {
       "role": "user",
