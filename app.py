@@ -7,6 +7,7 @@ import os
 
 load_dotenv()
 
+
 app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
@@ -69,7 +70,8 @@ def handleRecord():
 
 @app.route("/group-issue",methods=["POST"])
 def handleGroupIssue():
-    return  findIssueMatch(request)
-    
+    return findIssueMatch(request)
+
+        
 if __name__ == "__main__":
     app.run(debug=True,port=os.getenv("PORT",5000),host="0.0.0.0")
