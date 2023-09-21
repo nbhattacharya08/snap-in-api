@@ -37,8 +37,8 @@ def answer_call():
 
 @app.route("/handleRecord", methods=['GET', 'POST'])
 def handleRecord():
-    print(request.values)
-    url=dict(request.values)
+    print(request.json)
+    url=dict(request.json)
     url=url['RecordingUrl']+ ".mp3"
     print(url)
     response=requests.get(url , auth=("AC2deea27febf4d49d44979e23c46aad2c","fe472d53fb4ae0b7b0d7b29612a986dc"))
