@@ -112,7 +112,7 @@ def matchesIssues(ticketIssue,issues):
   reply=response['choices'][0]['message']['content']
   return ast.literal_eval(reply.strip())
 
-def generateTicket(text):
+def generateTicket(text , id):
   response = openai.ChatCompletion.create(
     model="gpt-4",
     messages=[
@@ -155,7 +155,7 @@ def generateTicket(text):
     'Content-Type': 'application/json'
     }
   }
-  res=requests.post("https://api.devrev.ai/works.create",{"body":ticket_body,"title":ticket_name , type:"ticket"},config)
+  res=requests.post("https://api.devrev.ai/works.create",{"artifacts":[id] , "body":ticket_body,"title":ticket_name , type:"ticket"},config)
   return res.json()
 
 
