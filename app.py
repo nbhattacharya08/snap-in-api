@@ -2,6 +2,7 @@ from flask import Flask , request
 import requests
 from functions import findIssueMatch
 from twilio.twiml.voice_response import VoiceResponse , Dial
+import openai
 from dotenv import load_dotenv
 import os
 
