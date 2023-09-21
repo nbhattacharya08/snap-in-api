@@ -14,23 +14,23 @@ def generateIssue(summary):
   messages=[
     {
       "role": "system",
-      "content": "You need to identify the main problems only faced by the customer or complaints made by a customer from a series of customer and support executive exchanges and condense each separate issue to a single succinct, grammatically correct sentence and format it as \"Issue 1 $Issue 2 $Issue3\". Then, for each separate issue, write a short sentence explaining it and format it as a comma-separated array with each element corresponding to the respective issue [\"Sentence 1\", \"Sentence 2\"]. There should not be any full stops in the sentences and the sentences should be in double quotes. The final output must be formatted as  \"Issue1 $ Issue2 & [\"Sentence 1\",\"Sentence 2\"]\""
+      "content": "You need to identify the main problems only faced by the customer or complaints made by a customer from a series of customer and support executive exchanges and condense each separate issue to a single succinct, grammatically correct sentence and format it as \"Issue 1$Issue 2$Issue3\". Then, for each separate issue, write a short sentence explaining it and format it as a comma-separated array with each element corresponding to the respective issue [Sentence 1, Sentence 2]. The final output must be formatted as  \"Issue1$Issue2 & [Sentence 1,Sentence 2]\""
     },
     {
       "role": "user",
-      "content": "The customer said that he could not contact his delivery partner and that the site took a long time to load."
+      "content": "The customer contacts the customer care executive to report two issues. The first issue is that they are unable to contact their assigned delivery partner. The executive assures the customer that the delivery partner will be in touch soon. The second issue is about spelling errors on the food delivery app's website. The executive acknowledges the problem and assures the customer that their team will address it. The call concludes with the customer expressing their gratitude."
     },
     {
       "role": "assistant",
-      "content": "Cannot contact delivery partner $ Site takes a long time to load. & [\"The customer is unable to contact their delivery partner\", \"The website is slow to load\"]"
+      "content": "Unable to contact delivery partner $ Spelling errors on website & [\"The customer is unable to contact the assigned delivery partner\", \"There are spelling errors on the website\"]"
     },
     {
       "role": "user",
-      "content": "The customer complained about his order reaching late and that there were too many ads in the app"
+      "content": "The customer contacts the customer care executive to report two issues with a music listening app. The first issue is that they are unable to view their playlists in the app. The executive informs the customer that there is a bug currently being worked on and appreciates the customer's patience. The second issue is that some songs are not available on the app, to which the executive explains that it is due to policy changes. The call concludes with the customer expressing gratitude and ending the call. "
     },
     {
       "role": "assistant",
-      "content": "Order delivered late $ Too many ads in the app. & [\"The customer's order arrived late\", \"The app has an excessive amount of advertisements\"]"
+      "content": "Playlists not visible $ Unavailable songs & [\"The customer cannot view their playlists\", \"Some songs are not available due to policy changes\"]"
     },
     {
       "role": "user",
@@ -42,7 +42,7 @@ def generateIssue(summary):
   top_p=1,
   frequency_penalty=0,
   presence_penalty=0
-  )
+)
   reply=response['choices'][0]['message']['content']
   reply=reply.split('&')
   return {"issues":reply[0].split('$'), "text":ast.literal_eval(reply[1].strip())}
@@ -92,7 +92,7 @@ def matchesIssues(ticketIssue,issues):
     },
     {
       "role": "user",
-      "content": "target issue :  some images appear broken $ list of issues : [\"Unresponsive media players\", \"Inconsistent branding\" ,  \"Broken Images\" ,  \"Inconsistent Design\" , \"Outdated Content\", \"Lack of Accessibility\"]"
+      "content": "target issue : some images appear broken $ list of issues : [\"Unresponsive media players\", \"Inconsistent branding\" ,  \"Broken Images\" ,  \"Inconsistent Design\" , \"Outdated Content\", \"Lack of Accessibility\"]"
     },
     {
       "role": "assistant",
