@@ -26,7 +26,7 @@ def answer_call():
     resp.say("Please record your message", voice='Polly.Amy')
     dial = Dial(
     record='record-from-answer-dual',
-    recording_status_callback='https://hackerhive.onrender.com//handleRecord',
+    recording_status_callback='https://hackerhive.onrender.com/handleRecord',
     timeout=30,
     channels=2
     )
