@@ -81,8 +81,9 @@ def handleRecord():
     for i in form:
         formdata[i["key"]]=i["value"]
     with open(f'./{filename}' , "rb") as file:
-        print(requests.post(link , data=formdata , files={"file":file}))
+        requests.post(link , data=formdata , files={"file":file})
 
+    #transcript["text"]="Hello. Hello, I am calling about an order on a food delivery app. Yeah, could you tell me what problem you are facing? I can't contact my delivery partner. Alright, just give me a second, I will look into it. Yeah, hello sir, your delivery partner has been assigned and they will contact you shortly. Are you facing any other problem? There were a lot of spelling errors in your website. Alright, fine, I will have my team look at it. Okay. Thank you."
     generateTicket(transcript["text"] , id)
 
     return transcript["text"]
