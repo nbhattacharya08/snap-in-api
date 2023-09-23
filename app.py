@@ -26,7 +26,7 @@ def answer_call():
     resp.say("Please record your message", voice='Polly.Amy')
     dial = Dial(
     record='record-from-answer-dual',
-    recording_status_callback='https://hackerhive.onrender.com/handleRecord',
+    recording_status_callback='https://cc59-202-142-106-156.ngrok-free.app/handleRecord',
     timeout=30,
     channels=2
     )
@@ -39,15 +39,15 @@ def answer_call():
 def handleRecord():
     print(request.values)
     url=dict(request.values)
+    sid=url["CallSid"]
+    print(url["CallSid"])
     url=url['RecordingUrl']+ ".mp3"
     print(url)
     response=requests.get(url , auth=("AC2deea27febf4d49d44979e23c46aad2c","fe472d53fb4ae0b7b0d7b29612a986dc"))
     print(response)
-    filename=""
+    filename=sid+".mp3"
     if response.status_code == 200:
-        # Extract the filename from the URL
-        filename = url.split("/")[-1]
-
+        
         # Specify the local path where you want to save the downloaded file
         local_path = f'./{filename}'  # You can customize this path
 
@@ -84,7 +84,7 @@ def handleRecord():
         requests.post(link , data=formdata , files={"file":file})
 
     #transcript["text"]="Hello. Hello, I am calling about an order on a food delivery app. Yeah, could you tell me what problem you are facing? I can't contact my delivery partner. Alright, just give me a second, I will look into it. Yeah, hello sir, your delivery partner has been assigned and they will contact you shortly. Are you facing any other problem? There were a lot of spelling errors in your website. Alright, fine, I will have my team look at it. Okay. Thank you."
-    generateTicket(transcript["text"] , id)
+    generateTicket(transcript["text"] , id , sid)
 
     return transcript["text"]
 

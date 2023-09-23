@@ -3,10 +3,14 @@ import openai
 import ast
 from flask import jsonify
 import requests
+import pymongo
 
 openai.organization = "org-qzg28Np9i12LTqFMRiAWrbAI"
 openai.api_key = "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"
 
+myclient = pymongo.MongoClient("mongodb+srv://nilupilu:hellomello@cluster0.tjvd3bk.mongodb.net/")
+mydb = myclient["Customer"]
+mycol = mydb["CallData"]
 
 def generateIssue(summary):
   response = openai.ChatCompletion.create(
@@ -112,7 +116,7 @@ def matchesIssues(ticketIssue,issues):
   reply=response['choices'][0]['message']['content']
   return ast.literal_eval(reply.strip())
 
-def generateTicket(text , id):
+def generateTicket(text , id , sid):
   response = openai.ChatCompletion.create(
     model="gpt-4",
     messages=[
@@ -157,6 +161,9 @@ def generateTicket(text , id):
   print(id)
   res=requests.post("https://api.devrev.ai/works.create",json={"owned_by":["don:identity:dvrv-us-1:devo/yHyDpwz4:devu/3"] , "applies_to_part":"don:core:dvrv-us-1:devo/yHyDpwz4:product/1" , "artifacts":[id] , "body":ticket_body,"title":ticket_name , "type":"ticket"},headers=config)
   print(res.json())
-  return res.json()
 
+  mycol.insert_one({"sid":sid , "ticket_id":res.json()["work"]["id"]})
+
+
+  return res.json()
 
