@@ -18,7 +18,7 @@ multidict==6.0.4
 openai==0.28.0
 PyJWT==2.8.0
 pymongo==4.5.0
-python-dotenv==1.0.0
+python-dotenv==0.21.1
 pytz==2023.3.post1
 requests==2.31.0
 tqdm==4.66.1
