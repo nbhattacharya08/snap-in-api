@@ -4,13 +4,20 @@ import ast
 from flask import jsonify
 import requests
 import pymongo
+from twilio.rest import Client
 
 openai.organization = "org-qzg28Np9i12LTqFMRiAWrbAI"
 openai.api_key = "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"
 
+account_sid = "AC2deea27febf4d49d44979e23c46aad2c"
+auth_token =  "fe472d53fb4ae0b7b0d7b29612a986dc"
+twiclient = Client(account_sid, auth_token)
+
+
 myclient = pymongo.MongoClient("mongodb+srv://nilupilu:hellomello@cluster0.tjvd3bk.mongodb.net/")
 mydb = myclient["Customer"]
-mycol = mydb["CallData"]
+mycoll = mydb["CallData"]
+supportColl=mydb["CustomerSupport"]
 
 def generateIssue(summary):
   response = openai.ChatCompletion.create(
@@ -162,7 +169,9 @@ def generateTicket(text , id , sid):
   res=requests.post("https://api.devrev.ai/works.create",json={"owned_by":["don:identity:dvrv-us-1:devo/yHyDpwz4:devu/3"] , "applies_to_part":"don:core:dvrv-us-1:devo/yHyDpwz4:product/1" , "artifacts":[id] , "body":ticket_body,"title":ticket_name , "type":"ticket"},headers=config)
   print(res.json())
 
-  mycol.insert_one({"sid":sid , "ticket_id":res.json()["work"]["id"]})
+  call=twiclient.calls(sid).fetch()
+  custNum=call._from
+  mycoll.insert_one({"number": custNum, "ticket_id":res.json()["work"]["id"]})
 
 
   return res.json()
