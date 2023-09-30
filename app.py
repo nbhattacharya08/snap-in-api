@@ -37,7 +37,7 @@ def answer_call():
         print("from",cnum)
         dial = Dial(
         record='record-from-answer-dual',
-        recording_status_callback= 'https://b742-103-44-174-33.ngrok-free.app/commandRecord',
+        recording_status_callback= 'https://hackerhive.onrender.com/commandRecord',
         timeout=30,
         channels=2,
         caller_id="+12564856295"
@@ -50,7 +50,7 @@ def answer_call():
         if(mycoll.find_one({"number":cnum}) == None):
             dial = Dial(
             record='record-from-answer-dual',
-            recording_status_callback='    https://b742-103-44-174-33.ngrok-free.app/handleRecord',
+            recording_status_callback='https://hackerhive.onrender.com/handleRecord',
             timeout=30,
             channels=2,
             caller_id="+12564856295"
@@ -65,7 +65,7 @@ def answer_call():
                 mycoll.delete_one({"ticket_id":query['ticket_id']})
                 dial = Dial(
                 record='record-from-answer-dual',
-                recording_status_callback=' https://b742-103-44-174-33.ngrok-free.app/handleRecord',
+                recording_status_callback=' https://hackerhive.onrender.com/handleRecord',
                 timeout=30,
                 channels=2,
                 caller_id="+12564856295"
@@ -76,7 +76,7 @@ def answer_call():
                 ticketId=query['ticket_id']
                 dial = Dial(
                 record='record-from-answer-dual',
-                recording_status_callback=' https://b742-103-44-174-33.ngrok-free.app/commandRecord',
+                recording_status_callback=' https://hackerhive.onrender.com/commandRecord',
                 timeout=30,
                 channels=2,
                 caller_id="+12564856295"
